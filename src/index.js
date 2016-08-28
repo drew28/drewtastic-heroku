@@ -10,9 +10,17 @@ import {
   Route,
   Router
 } from 'react-router';
+import ReactGA from 'react-ga';
+
+ReactGA.initialize('UA-5940128-2');
+
+function logPageView() {
+  ReactGA.set({page: window.location.pathname});
+  ReactGA.pageview(window.location.pathname);
+}
 
 ReactDOM.render((
-  <Router history={browserHistory}>
+  <Router history={browserHistory} onUpdate={logPageView} >
     <Route path="/" component={App}>
       <IndexRoute component={Home} />
       <Route path="pyramids" component={Pyramids} />
