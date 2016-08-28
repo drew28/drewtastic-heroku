@@ -3,26 +3,21 @@ import GameBoard from '../../components/GameBoard/GameBoard.js';
 import Card from "../../components/Card/Card.js";
 import Deck from "../../components/Deck/Deck.js";
 import styles from "./styles/styles.js";
+import constants from "../../constants.js";
 
 export default class Pyramids extends React.Component {
     state = {
         cardsInPlay: [],
         currentCard: {},
         deck: [],
+        gameState: constants.GAME_STATES.PLAYING,
         loading: true,
-        score: 28
+        score: 0,
+        scoreMultiplier: 0
     };
 
     componentDidMount() {
-        const game = this.state;
-        // fill deck with 52 cards
-        game.deck = Deck.initDeck();
-        // shuffle cards
-        game.deck = Deck.shuffle(game.deck);
-        game.cardsInPlay = game.deck.splice(0, 28); // take 28 cards off of the top
-        game.currentCard = game.deck.pop();
-        game.loading = false;
-        this.setState({game});
+      this.initGame();
     }
 
     checkCardAt(index) {
@@ -50,96 +45,132 @@ export default class Pyramids extends React.Component {
         return false;
     }
 
+    checkGameStatus() {
+      const game = this.state;
+      if (game.cardsInPlay.length === 0) {
+        game.gameState = constants.GAME_STATES.WIN;
+      } else if (game.deck.length === 0) {
+        const clickableCards = game.cardsInPlay.filter((card, i) => this.checkCardAt(i) && !card.played);
+        console.log(`clickableCards '${clickableCards.length}'`, clickableCards);
+        if (!clickableCards.some((card) => this.isCardPlayable(card))) {
+          game.gameState = constants.GAME_STATES.GAMEOVER;
+        }
+      }
+      this.setState({game});
+    }
+
     dealCards() {
-        // console.info("deal cards");
-        const {
-            currentCard,
-            deck
+      // console.info("deal cards");
+      const {
+        currentCard,
+          deck
         } = this.state;
         return (
-            <div className="dealer">
-                <div className="dealerGameContainer" style={styles.dealerGameContainer}>
-                    <div style={styles.dealerCurrentCardContainer}>
-                        <Card
-                            clickable={deck.length > 0}
-                            onPlayableCardClick={(e) => this.onStackCardClick(e)}
-                            rank={currentCard.rank}
-                            show={true}
-                            suit={currentCard.suit}
-                        />
-                    </div>
-                    <div style={styles.dealerPyramidsTableContainer}>
-                        {this.getRows()}
-                    </div>
-                </div>
+          <div className="dealer">
+            <div className="dealerGameContainer" style={styles.dealerGameContainer}>
+              <div style={styles.dealerCurrentCardContainer}>
+                <Card
+                  clickable={deck.length > 0}
+                  onPlayableCardClick={(e) => this.onStackCardClick(e)}
+                  rank={currentCard.rank}
+                  show={true}
+                  suit={currentCard.suit}
+                />
+              </div>
+              <div style={styles.dealerPyramidsTableContainer}>
+                {this.getRows()}
+              </div>
             </div>
+          </div>
         );
     }
 
     getRows() {
-        // console.info("get rows");
-        const {
-            cardsInPlay
-        } = this.state;
-        let rows = [];
-        let cardSlice;
-        let cardsInRow = 0;
-        try {
-            for (let i = 0; i < cardsInPlay.length - 1; i+=0) {
-                cardsInRow++;
-                cardSlice = cardsInPlay.slice(i, i + cardsInRow);
-                // console.info(`NEW ROW: i: ${i}, cIR: ${cardsInRow}, cSL: ${cardSlice.length}`);
-                rows.push(<div style={styles.pyramidRow(rows.length)}>
-                        {
-                            cardSlice.map((card) => {
-                                const clickable = this.checkCardAt(i);
-                                // console.info(`card: ${i}, clickable: ${clickable}`, card);
-                                i++;
-                                return (
-                                    <Card
-                                        clickable={clickable}
-                                        key={i}
-                                        onPlayableCardClick={(e) => this.onPlayableCardClick(e)}
-                                        played={card.played}
-                                        rank={card.rank}
-                                        show={clickable}
-                                        styles={styles}
-                                        suit={card.suit}
-                                    />
-                                )
-                            })
-                        }
-                    </div>
-                )
-            }
-        } catch (e) {
-            console.error("Pyramids::getRows()", e);
+      // console.info("get rows");
+      const {
+          cardsInPlay
+      } = this.state;
+      let rows = [];
+      let cardSlice;
+      let cardsInRow = 0;
+      try {
+        for (let i = 0; i < cardsInPlay.length - 1; i+=0) {
+          cardsInRow++;
+          cardSlice = cardsInPlay.slice(i, i + cardsInRow);
+          // console.info(`NEW ROW: i: ${i}, cIR: ${cardsInRow}, cSL: ${cardSlice.length}`);
+          rows.push(
+            <div
+              style={styles.pyramidRow(rows.length)}
+              key={i}
+            >
+              {
+                cardSlice.map((card) => {
+                  const clickable = this.checkCardAt(i);
+                  // console.info(`card: ${i}, clickable: ${clickable}`, card);
+                  i++;
+                  return (
+                    <Card
+                      clickable={clickable}
+                      key={i}
+                      onPlayableCardClick={(e) => this.onPlayableCardClick(e)}
+                      played={card.played}
+                      rank={card.rank}
+                      show={clickable}
+                      styles={styles}
+                      suit={card.suit}
+                    />
+                  )
+                })
+              }
+            </div>
+          )
         }
-        return rows;
+      } catch (e) {
+        console.error("Pyramids::getRows()", e);
+      }
+      return rows;
+    }
+
+    initGame() {
+      const game = this.state;
+      // fill deck with 52 cards
+      game.deck = Deck.initDeck();
+      // shuffle cards
+      game.deck = Deck.shuffle(game.deck);
+      game.cardsInPlay = game.deck.splice(0, 28); // take 28 cards off of the top
+      game.currentCard = game.deck.pop();
+      game.loading = false;
+      game.gameState = constants.GAME_STATES.PLAYING;
+      this.setState({game});
+    }
+
+    isCardPlayable(card) {
+      const {currentCard} = this.state;
+      if (card.rank === currentCard.rank - 1
+          || card.rank === currentCard.rank + 1
+          || (card.rank === 13 && currentCard.rank === 1)
+          || (card.rank === 1 && currentCard.rank === 13)) {
+          return true;
+        }
+      return false;
     }
 
     onStackCardClick(e) {
-        console.info("onStackCardClick", e);
-        const game = this.state;
-        if (game.deck.length > 0) {
-            game.currentCard = game.deck.pop();
-            this.setState(game);
-        }
+      const game = this.state;
+      if (game.deck.length > 0) {
+        game.currentCard = game.deck.pop();
+        game.scoreMultiplier = 0;
+        this.setState(game);
+      }
+      this.checkGameStatus();
     }
 
     onPlayableCardClick(e) {
-        console.info(`clicked ${e.card.rank} of ${e.card.suit}`);
-        const {card} = e;
-        const {currentCard} = this.state;
-        if (card) {
-            if (card.rank === currentCard.rank - 1 || card.rank === currentCard.rank + 1) {
-                // 2 thru 12 test
-                this.replaceCurrentCard(card);
-            } else if ((card.rank === 13 && currentCard.rank === 1) || (card.rank === 1 && currentCard.rank === 13)) {
-                // king to ace
-                this.replaceCurrentCard(card);
-            }
-        }
+      const {card} = e;
+      if (card && this.isCardPlayable(card)) {
+        this.replaceCurrentCard(card);
+      }
+      this.checkGameStatus();
     }
 
     replaceCurrentCard(card) {
@@ -150,8 +181,9 @@ export default class Pyramids extends React.Component {
             return (c.rank === card.rank && c.suit === card.suit);
         });
         if (cardInPlay) {
-            console.info("played card");
             cardInPlay.played = true;
+            game.scoreMultiplier++;
+            game.score += 10 + (10 * game.scoreMultiplier);
         }
         this.setState(game);
     }
@@ -159,6 +191,7 @@ export default class Pyramids extends React.Component {
     render() {
         const {
             deck,
+            gameState,
             loading,
             score
         } = this.state;
@@ -166,7 +199,12 @@ export default class Pyramids extends React.Component {
             <div>
                 <h2>Pyramids</h2>
                 {!loading && deck && (
-                    <GameBoard score={score}>
+                    <GameBoard
+                      message={`Cards in stack: ${deck.length}`}
+                      gameState={gameState}
+                      restartGame={() => {this.initGame()}}
+                      score={score}
+                    >
                         {this.dealCards()}
                     </GameBoard>
                 )}
