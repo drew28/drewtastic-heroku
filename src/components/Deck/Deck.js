@@ -1,11 +1,18 @@
 // import {logging} from 'react-server';
 
 // const logger = logging.getLogger(__LOGGER__);
+import constants from '../../constants.js';
 
 class Deck {
     initDeck() {
         let deck = [];
-        const suits = ["♠", "♣", "♦", "♥"];// &spades; &hearts; &diams; &clubs;
+        const {
+          CLUBS,
+          DIAMONDS,
+          HEARTS,
+          SPADES
+        } = constants.SUITS;
+        const suits = [SPADES, CLUBS, DIAMONDS, HEARTS];// &spades; &hearts; &diams; &clubs;
         suits
         .forEach((suit) => {
             for (let rank = 1; rank < 14; rank++) {

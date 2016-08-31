@@ -8,12 +8,14 @@ export default {
     },
     cardContainer: {
         border: "1px solid #484848",
+        cursor: 'pointer',
         display: "inline-block"
     },
+    cardPositionContainer: {
+      position: "absolute"
+    },
     emptyCardContainer: {
-        alignSelf: "flex-end",
-        display: "inline-block",
-        height: 1
+        display: "none"
     },
     dealerCurrentCardContainer: {
         backgroundColor: "#282828",
@@ -21,28 +23,23 @@ export default {
         position: "relative",
         left: 8,
         top: 8,
-        width: 100
+        width: 100,
+        zIndex: 10
     },
     dealerGameContainer: {
         margin: "0 auto",
-        width: 500
+        width: 400
     },
     dealerPyramidsTableContainer: {
+        position: "relative",
         width: "100%"
     },
     dealerPyramidsTable: {
         width: "100%"
     },
-    pyramidRow: (row) => {
-        return {
-            alignItems: "center",
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            position: "relative",
-            textAlign: "center",
-            height: 82,
-            top: -50 * row
-        }
+    gameContainerWidth: 400,
+    margin: 5,
+    stackCard: {
+      cursor: "pointer"
     }
 }

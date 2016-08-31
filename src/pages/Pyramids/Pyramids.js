@@ -4,6 +4,7 @@ import Card from "../../components/Card/Card.js";
 import Deck from "../../components/Deck/Deck.js";
 import styles from "./styles/styles.js";
 import constants from "../../constants.js";
+import globals from "../../globalStyles.js";
 
 export default class Pyramids extends React.Component {
     state = {
@@ -51,7 +52,6 @@ export default class Pyramids extends React.Component {
         game.gameState = constants.GAME_STATES.WIN;
       } else if (game.deck.length === 0) {
         const clickableCards = game.cardsInPlay.filter((card, i) => this.checkCardAt(i) && !card.played);
-        console.log(`clickableCards '${clickableCards.length}'`, clickableCards);
         if (!clickableCards.some((card) => this.isCardPlayable(card))) {
           game.gameState = constants.GAME_STATES.GAMEOVER;
         }
@@ -62,53 +62,54 @@ export default class Pyramids extends React.Component {
     dealCards() {
       // console.info("deal cards");
       const {
+        cardsInPlay,
         currentCard,
-          deck
-        } = this.state;
-        return (
-          <div className="dealer">
-            <div className="dealerGameContainer" style={styles.dealerGameContainer}>
-              <div style={styles.dealerCurrentCardContainer}>
-                <Card
-                  clickable={deck.length > 0}
-                  onPlayableCardClick={(e) => this.onStackCardClick(e)}
-                  rank={currentCard.rank}
-                  show={true}
-                  suit={currentCard.suit}
-                />
-              </div>
-              <div style={styles.dealerPyramidsTableContainer}>
-                {this.getRows()}
-              </div>
-            </div>
-          </div>
-        );
-    }
-
-    getRows() {
-      // console.info("get rows");
-      const {
-          cardsInPlay
+        deck
       } = this.state;
-      let rows = [];
-      let cardSlice;
+      const cardPositions = [];
+      const center = styles.dealerGameContainer.width / 2;
       let cardsInRow = 0;
-      try {
-        for (let i = 0; i < cardsInPlay.length - 1; i+=0) {
-          cardsInRow++;
-          cardSlice = cardsInPlay.slice(i, i + cardsInRow);
-          // console.info(`NEW ROW: i: ${i}, cIR: ${cardsInRow}, cSL: ${cardSlice.length}`);
-          rows.push(
-            <div
-              style={styles.pyramidRow(rows.length)}
-              key={i}
-            >
-              {
-                cardSlice.map((card) => {
-                  const clickable = this.checkCardAt(i);
-                  // console.info(`card: ${i}, clickable: ${clickable}`, card);
-                  i++;
-                  return (
+      let cards;
+      let row = -1;
+      for (let i = 0; i < cardsInPlay.length; i++) {
+        cardsInRow++;
+        row++;
+        let leftStart = center - (cardsInRow * (globals.cardWidth / 2)) - (((cardsInRow) * styles.margin) / 2);
+        cards = cardsInPlay.slice(i, i + cardsInRow);
+        for (let j = 0; j < cards.length; j++) {
+          const pos = {
+            left: leftStart + (j * globals.cardWidth) + (j * styles.margin), // start + width + margin
+            top: row * globals.cardHeight / 2
+          };
+          cardPositions.push(pos);
+        }
+      }
+      return (
+        <div className="dealer">
+          <div className="dealerGameContainer" style={styles.dealerGameContainer}>
+            <div style={styles.dealerCurrentCardContainer}>
+              <Card
+                clickable={deck.length > 0}
+                onPlayableCardClick={(e) => this.onStackCardClick(e)}
+                rank={currentCard.rank}
+                show={true}
+                styles={
+                  styles.stackCard
+                }
+                suit={currentCard.suit}
+              />
+            </div>
+            <div style={styles.dealerPyramidsTableContainer}>
+              {cardsInPlay.map((card, i) => {
+                const clickable = this.checkCardAt(i);
+                return (
+                  <div
+                    style={{
+                      ...cardPositions[i],
+                      ...styles.cardPositionContainer
+                    }}
+                    key={i}
+                  >
                     <Card
                       clickable={clickable}
                       key={i}
@@ -119,16 +120,13 @@ export default class Pyramids extends React.Component {
                       styles={styles}
                       suit={card.suit}
                     />
-                  )
-                })
-              }
+                  </div>
+                );
+              })}
             </div>
-          )
-        }
-      } catch (e) {
-        console.error("Pyramids::getRows()", e);
-      }
-      return rows;
+          </div>
+        </div>
+      );
     }
 
     initGame() {
@@ -204,6 +202,7 @@ export default class Pyramids extends React.Component {
                       gameState={gameState}
                       restartGame={() => {this.initGame()}}
                       score={score}
+                      style={styles.gameBoardContainer}
                     >
                         {this.dealCards()}
                     </GameBoard>
