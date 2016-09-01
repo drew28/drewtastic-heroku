@@ -5,6 +5,15 @@ import Deck from "../../components/Deck/Deck.js";
 import styles from "./styles/styles.js";
 import constants from "../../constants.js";
 import globals from "../../globalStyles.js";
+import {
+  Button,
+  Card as MDLCard,
+  CardTitle,
+  CardText,
+  CardActions,
+  CardMenu,
+  IconButton
+} from 'react-mdl';
 
 export default class Pyramids extends React.Component {
     state = {
@@ -194,24 +203,34 @@ export default class Pyramids extends React.Component {
             score
         } = this.state;
         return (
-            <div>
-                <h2>Pyramids</h2>
-                {!loading && deck && (
-                    <GameBoard
-                      message={`Cards in stack: ${deck.length}`}
-                      gameState={gameState}
-                      restartGame={() => {this.initGame()}}
-                      score={score}
-                      style={styles.gameBoardContainer}
-                    >
-                        {this.dealCards()}
-                    </GameBoard>
-                )}
-                {loading && !deck && (
-                    <div className="loading">
-                        Loading...
-                    </div>
-                )}
+            <div className="pyramids">
+              <MDLCard shadow={0} style={{width: '476px', margin: 'auto'}}>
+                <CardTitle style={{color: '#fff', height: '100px', background: 'url(http://www.getmdl.io/assets/demos/welcome_card.jpg) center / cover'}}>Pyramids</CardTitle>
+                <CardText>
+                  {!loading && deck && (
+                      <GameBoard
+                        message={`Cards in stack: ${deck.length}`}
+                        gameState={gameState}
+                        restartGame={() => {this.initGame()}}
+                        score={score}
+                        style={styles.gameBoardContainer}
+                      >
+                          {this.dealCards()}
+                      </GameBoard>
+                  )}
+                  {loading && !deck && (
+                      <div className="loading">
+                          Loading...
+                      </div>
+                  )}
+                </CardText>
+                <CardActions border>
+                    <Button colored onClick={() => {this.initGame()}}>Deal</Button>
+                </CardActions>
+                <CardMenu style={{color: '#fff'}}>
+                    <IconButton name="share" />
+                </CardMenu>
+              </MDLCard>
             </div>
         );
     }
