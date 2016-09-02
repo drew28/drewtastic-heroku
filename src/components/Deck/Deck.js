@@ -1,7 +1,7 @@
 // import {logging} from 'react-server';
 
 // const logger = logging.getLogger(__LOGGER__);
-import constants from '../../constants.js';
+import {constants} from '../../constants.js';
 
 class Deck {
     initDeck() {

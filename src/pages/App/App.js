@@ -6,6 +6,7 @@ import GoogleAd from 'react-google-ad';
 
 class App extends Component {
   render() {
+    console.log(constants);
     const isMobile = window.innerWidth < constants.MOBILE_WIDTH;
     return (
       <div className="app" style={styles.app}>

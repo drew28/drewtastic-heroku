@@ -1,5 +1,5 @@
 import globals from '../../../globalStyles.js';
-import constants from '../../../constants.js';
+import {constants} from '../../../constants.js';
 
 export const cardDimensions = {
     height: globals.cardHeight,

@@ -3,7 +3,7 @@ import GameBoard from '../../components/GameBoard/GameBoard.js';
 import Card from "../../components/Card/Card.js";
 import Deck from "../../components/Deck/Deck.js";
 import styles from "./styles/styles.js";
-import constants from "../../constants.js";
+import {constants} from "../../constants.js";
 import globals from "../../globalStyles.js";
 import {
   Button,

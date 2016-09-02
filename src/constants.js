@@ -1,4 +1,4 @@
-const constants = {
+export const constants = {
   GAME_STATES: {
     PLAYING: 'GAME_STATES.PLAYING',
     GAMEOVER: 'GAME_STATES.GAMEOVER',
@@ -13,7 +13,7 @@ const constants = {
   MOBILE_WIDTH: 992
 };
 
-const mediaQueries = {
+export const mediaQueries = {
   DESKTOP: "@media (min-width: 992px)",
   MOBILE: "@media (max-width: 480px), (max-height: 400px)",
   TABLET: "@media (max-width: 768px), (max-height: 400px)"

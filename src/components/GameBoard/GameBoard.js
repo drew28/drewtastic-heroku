@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from "./styles/styles.js";
-import constants from  '../../constants.js';
+import {constants} from  '../../constants.js';
 
 export default class GameBoard extends React.Component {
     static propTypes = {
