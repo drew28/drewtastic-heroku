@@ -7,13 +7,9 @@ import constants from "../../constants.js";
 import globals from "../../globalStyles.js";
 import {
   Button,
-  Card as MDLCard,
-  CardTitle,
-  CardText,
-  CardActions,
-  CardMenu,
-  IconButton
-} from 'react-mdl';
+  Panel,
+  Well
+} from 'react-bootstrap';
 
 export default class Pyramids extends React.Component {
     state = {
@@ -202,11 +198,15 @@ export default class Pyramids extends React.Component {
             loading,
             score
         } = this.state;
+        const gameHeader = <h4>Pyramids</h4>;
+        const gameFooter = <Button onClick={() => {this.initGame()}}>Deal</Button>;
         return (
             <div className="pyramids">
-              <MDLCard shadow={0} style={styles.gameMdlCard}>
-                <CardTitle style={styles.gameCardMdlTitle}>Pyramids</CardTitle>
-                <CardText>
+              <Well bsSize="small" style={styles.gameMdlCard}>
+                <Panel
+                  header={gameHeader}
+                  footer={gameFooter}
+                >
                   {!loading && deck && (
                       <GameBoard
                         message={`Cards in stack: ${deck.length}`}
@@ -223,14 +223,8 @@ export default class Pyramids extends React.Component {
                           Loading...
                       </div>
                   )}
-                </CardText>
-                <CardActions border>
-                    <Button colored onClick={() => {this.initGame()}}>Deal</Button>
-                </CardActions>
-                <CardMenu style={styles.gameMdlCardMenu}>
-                    <IconButton name="share" />
-                </CardMenu>
-              </MDLCard>
+                </Panel>
+              </Well>
             </div>
         );
     }

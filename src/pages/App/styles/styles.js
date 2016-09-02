@@ -3,9 +3,9 @@ export default {
     textAlign: "center"
   },
   appHeader: {
-    backgroundColor: "#222",
+    backgroundColor: "#282828",
     color: "white",
-    height: 56,
+    height: 100,
     marginBottom: 20,
     padding: 20
   },
@@ -14,10 +14,5 @@ export default {
   },
   appFooter: {
     marginTop: 30
-  },
-  googleAd728x90: {
-    height:90,
-    margin: "16px auto",
-    width: 728
   }
 }
