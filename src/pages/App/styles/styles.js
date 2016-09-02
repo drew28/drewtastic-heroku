@@ -14,5 +14,10 @@ export default {
   },
   appFooter: {
     marginTop: 30
+  },
+  googleAd728x90: {
+    height:90,
+    margin: "16px auto",
+    width: 728
   }
 }
