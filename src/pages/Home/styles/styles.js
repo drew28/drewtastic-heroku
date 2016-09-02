@@ -1,3 +1,5 @@
+import {mediaQueries} from "../../../constants.js";
+const {DESKTOP} = mediaQueries;
 export default {
   jumbotron: {
     margin: '0 auto',
@@ -15,5 +17,11 @@ export default {
   },
   gameCardText: {
     textAlign: "left"
-  }
+  },
+  home: {
+    [DESKTOP]: {
+      margin: "0 auto",
+      width: 992
+    }
+  },
 };

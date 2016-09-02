@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import radium from 'radium';
 import styles from './styles/styles.js';
 import {browserHistory} from 'react-router';
 import {
@@ -16,7 +17,7 @@ class Home extends Component {
   }
   render() {
     return (
-      <div className="Home">
+      <div className="Home" style={styles.home}>
         <Panel style={styles.panel}>
           <Jumbotron style={styles.jumbotron}>
             <h1>
@@ -29,7 +30,12 @@ class Home extends Component {
               pyramid.
             </p>
             <p>
-              <Button onClick={() => {this.gotoRoute("/pyramids")}}>Play Pyramids!</Button>
+              <Button
+                bsStyle="primary"
+                onClick={() => {this.gotoRoute("/pyramids")}}
+              >
+                Play Pyramids!
+              </Button>
             </p>
           </Jumbotron>
         </Panel>
@@ -38,4 +44,4 @@ class Home extends Component {
   }
 }
 
-export default Home;
+export default radium(Home);

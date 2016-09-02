@@ -9,6 +9,7 @@
   "dependencies": {
     "bootstrap": "^3.3.7",
     "deepmerge": "^0.2.10",
+    "radium": "^0.18.1",
     "react": "^15.3.1",
     "react-bootstrap": "^0.30.3",
     "react-dom": "^15.3.1",
