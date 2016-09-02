@@ -4,6 +4,8 @@ import App from './pages/App/App';
 import Home from './pages/Home/Home';
 import Pyramids from './pages/Pyramids/Pyramids';
 import './index.css';
+import './material.css';
+import './material.js';
 import {
   browserHistory,
   IndexRoute,
