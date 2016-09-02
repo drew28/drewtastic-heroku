@@ -204,8 +204,8 @@ export default class Pyramids extends React.Component {
         } = this.state;
         return (
             <div className="pyramids">
-              <MDLCard shadow={0} style={{width: '476px', margin: 'auto'}}>
-                <CardTitle style={{color: '#fff', height: '100px', background: 'url(http://www.getmdl.io/assets/demos/welcome_card.jpg) center / cover'}}>Pyramids</CardTitle>
+              <MDLCard shadow={0} style={styles.gameMdlCard}>
+                <CardTitle style={styles.gameCardMdlTitle}>Pyramids</CardTitle>
                 <CardText>
                   {!loading && deck && (
                       <GameBoard
@@ -227,7 +227,7 @@ export default class Pyramids extends React.Component {
                 <CardActions border>
                     <Button colored onClick={() => {this.initGame()}}>Deal</Button>
                 </CardActions>
-                <CardMenu style={{color: '#fff'}}>
+                <CardMenu style={styles.gameMdlCardMenu}>
                     <IconButton name="share" />
                 </CardMenu>
               </MDLCard>
