@@ -14,8 +14,5 @@ export default {
   },
   appFooter: {
     marginTop: 30
-  },
-  googleAdContainer: {
-    margin: "20px auto"
   }
 }
