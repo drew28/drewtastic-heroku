@@ -68,6 +68,7 @@ class Home extends Component {
         <div className="google-ad-container" style={styles.googleAdContainer}>
           <GoogleAd client="ca-pub-7550332846806881" slot="1308243719" format="auto" />
         </div>
+        <a name="expresslanesimages"></a>
         <Panel
           footer={googlePlayFooter}
           header={expressLanesHeader}
