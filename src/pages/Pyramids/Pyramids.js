@@ -10,6 +10,7 @@ import {
   Panel,
   Well
 } from 'react-bootstrap';
+import GoogleAd from 'react-google-ad';
 
 export default class Pyramids extends React.Component {
     state = {
@@ -225,6 +226,9 @@ export default class Pyramids extends React.Component {
                   )}
                 </Panel>
               </Well>
+              <div className="google-ad-container" style={styles.googleAdContainer}>
+                <GoogleAd client="ca-pub-7550332846806881" slot="1308243719" format="auto" />
+              </div>
             </div>
         );
     }

@@ -1,6 +1,6 @@
-import {mediaQueries} from "../../../constants.js";
+import {constants, mediaQueries} from '../../../constants.js';
 const {DESKTOP} = mediaQueries;
-const desktopWidth = 992;
+
 export default {
   gameCardTitle: {
     color: "#fff",
@@ -19,7 +19,7 @@ export default {
   googleAdContainer: {
     margin: "20px auto",
     [DESKTOP]: {
-      width: desktopWidth
+      width: constants.MOBILE_WIDTH
     }
   },
   googlePlayButton: {
@@ -29,7 +29,7 @@ export default {
   home: {
     [DESKTOP]: {
       margin: "0 auto",
-      width: desktopWidth
+      width: constants.MOBILE_WIDTH
     }
   },
   jumbotron: {

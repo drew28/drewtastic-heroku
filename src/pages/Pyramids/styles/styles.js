@@ -50,6 +50,10 @@ export default {
       background: 'url(http://www.getmdl.io/assets/demos/welcome_card.jpg) center / cover'
     },
     gameContainerWidth: 400,
+    googleAdContainer: {
+      margin: "20px auto",
+      width: 400
+    },
     margin: 5,
     stackCard: {
       cursor: "pointer"
