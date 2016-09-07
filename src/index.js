@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import App from './pages/App/App';
 import Home from './pages/Home/Home';
 import Pyramids from './pages/Pyramids/Pyramids';
+import GameOfLife from './pages/GameOfLife/GameOfLife';
 import './index.css';
 import {
   browserHistory,
@@ -34,6 +35,7 @@ ReactDOM.render((
     <Route path="/" component={App}>
       <IndexRoute component={Home} />
       <Route path="pyramids" component={Pyramids} />
+      <Route path="gameoflife" component={GameOfLife} />
     </Route>
   </Router>
 ),

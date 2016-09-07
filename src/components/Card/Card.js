@@ -64,15 +64,15 @@ const Card = ({
 };
 
 Card.propTypes = {
-    onPlayableCardClick: React.PropTypes.func,
-    clickable: React.PropTypes.bool,
-    played: React.PropTypes.bool,
-    show: React.PropTypes.bool,
-    styles: React.PropTypes.shape({
-        cardContainer: React.PropTypes.object
-    }),
-    suit: React.PropTypes.string.isRequired,
-    rank: React.PropTypes.number.isRequired
+  onPlayableCardClick: React.PropTypes.func,
+  clickable: React.PropTypes.bool,
+  played: React.PropTypes.bool,
+  show: React.PropTypes.bool,
+  styles: React.PropTypes.shape({
+      cardContainer: React.PropTypes.object
+  }),
+  suit: React.PropTypes.string.isRequired,
+  rank: React.PropTypes.number.isRequired
 };
 
 export default Card;

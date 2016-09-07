@@ -14,13 +14,13 @@ import GoogleAd from 'react-google-ad';
 
 export default class Pyramids extends React.Component {
     state = {
-        cardsInPlay: [],
-        currentCard: {},
-        deck: [],
-        gameState: constants.GAME_STATES.PLAYING,
-        loading: true,
-        score: 0,
-        scoreMultiplier: 0
+      cardsInPlay: [],
+      currentCard: {},
+      deck: [],
+      gameState: constants.GAME_STATES.PLAYING,
+      loading: true,
+      score: 0,
+      scoreMultiplier: 0
     };
 
     componentDidMount() {
@@ -145,6 +145,7 @@ export default class Pyramids extends React.Component {
       game.currentCard = game.deck.pop();
       game.loading = false;
       game.gameState = constants.GAME_STATES.PLAYING;
+      game.score = 0;
       this.setState({game});
     }
 
@@ -203,7 +204,7 @@ export default class Pyramids extends React.Component {
         const gameFooter = <Button onClick={() => {this.initGame()}}>Deal</Button>;
         return (
             <div className="pyramids">
-              <Well bsSize="small" style={styles.gameMdlCard}>
+              <Well bsSize="small" style={styles.gameBootStrapWell}>
                 <Panel
                   header={gameHeader}
                   footer={gameFooter}

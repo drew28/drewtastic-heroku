@@ -37,17 +37,9 @@ export default {
     dealerPyramidsTable: {
         width: "100%"
     },
-    gameMdlCard: {
+    gameBootStrapWell: {
       width: 476,
       margin: 'auto'
-    },
-    gameMdlCardMenu: {
-      color: '#fff'
-    },
-    gameCardMdlTitle: {
-      color: '#fff',
-      height: '100px',
-      background: 'url(http://www.getmdl.io/assets/demos/welcome_card.jpg) center / cover'
     },
     gameContainerWidth: 400,
     googleAdContainer: {
