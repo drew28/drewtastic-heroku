@@ -13,6 +13,8 @@ const LIFE_PERCENTAGE = .2
 export default class GameOfLife extends React.Component {
   state = {
     columns: 20,
+    cycleInterval: undefined,
+    isCycling: false,
     matrix: [],
     rows: 20
   };
@@ -128,16 +130,19 @@ export default class GameOfLife extends React.Component {
   }
 
   toggleCycling() {
-    if (!this.cycling) {
-      this.cycling = setInterval(() => this.createAndDestroy(), 100);
+    const game = this.state;
+    if (!game.isCycling) {
+      game.cycleInterval = setInterval(() => this.createAndDestroy(), 100);
+      game.isCycling = true;
     } else {
-      clearInterval(this.cycling);
-      delete this.cycling;
+      clearInterval(game.cycleInterval);
+      game.isCycling = false;
     }
+    this.setState({game});
   }
 
   render() {
-    const isCycling = !!this.cycling;
+    const {isCycling} = this.state;
     const gameHeader = <h4>Game Of Life</h4>;
     const gameFooter = (
       <div className="game-footer">
