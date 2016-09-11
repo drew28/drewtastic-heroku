@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './pages/App/App';
 import Home from './pages/Home/Home';
+import Blocks from './pages/Blocks/Blocks.js';
 import Pyramids from './pages/Pyramids/Pyramids';
 import GameOfLife from './pages/GameOfLife/GameOfLife';
 import './index.css';
@@ -34,8 +35,9 @@ ReactDOM.render((
   <Router history={browserHistory} onUpdate={logPageView} >
     <Route path="/" component={App}>
       <IndexRoute component={Home} />
-      <Route path="pyramids" component={Pyramids} />
+      <Route path="blocks" component={Blocks} />
       <Route path="gameoflife" component={GameOfLife} />
+      <Route path="pyramids" component={Pyramids} />
     </Route>
   </Router>
 ),

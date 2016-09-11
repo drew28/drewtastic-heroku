@@ -10,6 +10,21 @@ import {Link} from 'react-router';
 import githubIcon from '../../images/GitHub-Mark-Light-32px.png';
 import styles from './styles/styles.js';
 
+const menuItems = [{
+  href: "/blocks",
+  title: "Blocks"
+}, {
+  href: "/#expresslanesimages",
+  title: "Express Lanes Images"
+}, {
+  href: "/gameoflife",
+  title: "Game Of Life"
+}, {
+  href: "/pyramids",
+  title: "Pyramids"
+}];
+
+
 const Navigation = () => {
   return (
     <Navbar inverse>
@@ -28,24 +43,15 @@ const Navigation = () => {
             title="Projects"
             id="basic-nav-dropdown"
           >
-            <MenuItem
-              eventKey={3.1}
-              href="/#expresslanesimages"
-            >
-              Express Lanes Images
-            </MenuItem>
-            <MenuItem
-            eventKey={3.2}
-            href="/gameoflife"
-            >
-            Game Of Life
-            </MenuItem>
-            <MenuItem
-              eventKey={3.3}
-              href="/pyramids"
-            >
-              Pyramids
-            </MenuItem>
+            {menuItems.map((menuItem, i) => (
+              <MenuItem
+                eventKey={`3.${i + 1}`}
+                key={i}
+                href={menuItem.href}
+              >
+                {menuItem.title}
+              </MenuItem>
+            ))}
           </NavDropdown>
         </Nav>
         <Nav pullRight>
