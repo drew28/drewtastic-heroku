@@ -39,7 +39,7 @@ export default {
     width: "100%"
   },
   panel: {
-    margin: "0 auto",
+    margin: "10px auto",
     textAlign: "left",
     width: "100%"
   },

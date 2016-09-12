@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import radium from 'radium';
 import styles from './styles/styles.js';
+import dynamicSigns from '../../images/projects/expresslanesimages/dynamicsigns.png';
+import historicRates from '../../images/projects/expresslanesimages/historicrates.png';
+import tripCostEstimator from '../../images/projects/expresslanesimages/tripcostestimator.png';
 import {browserHistory} from 'react-router';
 import {
   Button,
@@ -18,17 +21,31 @@ class Home extends Component {
   contextTypes: {
     router: React.PropTypes.object.isRequired
   }
+  getFooterButton(route, title) {
+    return (
+      <div style={styles.panelFooter}>
+        <Button
+          bsStyle="primary"
+          onClick={() => {this.gotoRoute(route)}}
+        >
+          {title}
+        </Button>
+        </div>
+    );
+  }
+  getPanelHeader(title) {
+    return (
+      <div style={styles.panelHeader}>
+        <h2>
+          {title}
+        </h2>
+      </div>
+    );
+  }
   gotoRoute(path) {
     browserHistory.push(path);
   }
   render() {
-    const expressLanesHeader = (
-      <div style={styles.panelHeader}>
-        <h2>
-          Express Lanes Images
-        </h2>
-      </div>
-    );
     const googlePlayFooter = (
       <div style={styles.panelFooter}>
         <a
@@ -47,20 +64,18 @@ class Home extends Component {
         <Panel style={styles.panel}>
           <Jumbotron style={styles.jumbotron}>
             <h1>
-              Pyramids
+              Game of Life
             </h1>
             <p>
-              The object of this game is to remove cards from the pyramid to the foundation. this
-              is done by selecting a card that is either a value higher or lower than the foundation
-              card.  For example, when the foundation card is 4, a 3 or 5 may be removed from the
-              pyramid.
+              Checkout the react version of the game of life!
+
             </p>
-            <p>
+            <p style={styles.panelFooter}>
               <Button
                 bsStyle="primary"
-                onClick={() => {this.gotoRoute("/pyramids")}}
+                onClick={() => {this.gotoRoute("/gameoflife")}}
               >
-                Play Pyramids!
+                View Game of Life!
               </Button>
             </p>
           </Jumbotron>
@@ -70,8 +85,20 @@ class Home extends Component {
         </div>
         <a name="expresslanesimages"></a>
         <Panel
+          footer={this.getFooterButton("/pyramids", "Play Pyramids!")}
+          header={this.getPanelHeader("Pyramids")}
+          style={styles.panel}
+        >
+          <p>
+            The object of this game is to remove cards from the pyramid to the foundation. this
+            is done by selecting a card that is either a value higher or lower than the foundation
+            card.  For example, when the foundation card is 4, a 3 or 5 may be removed from the
+            pyramid.
+          </p>
+        </Panel>
+        <Panel
           footer={googlePlayFooter}
-          header={expressLanesHeader}
+          header={this.getPanelHeader("Express Lanes Images")}
           style={styles.panel}
         >
           <p>
@@ -114,7 +141,7 @@ class Home extends Component {
                     <img
                       alt=""
                       height={334}
-                      src="https://lh3.googleusercontent.com/xLPV0hEoXQuabXszYZZKvBXQu9cvUA63LlQ2TSmqXN8j35T1zZ4TtVzaRkSP6gZJ6B0=h310-rw"
+                      src={dynamicSigns}
                       width="auto"
                     />
                   </Carousel.Item>
@@ -122,7 +149,7 @@ class Home extends Component {
                     <img
                       alt=""
                       height={334}
-                      src="https://lh3.googleusercontent.com/LSU4JBjr2sxF6yGhKPBoNCRJ5nTXlDvBc4CIA3PRHEvpZpmACILVJNnLcxclzInmUqQ3=h310-rw"
+                      src={tripCostEstimator}
                       width="auto"
                     />
                   </Carousel.Item>
@@ -130,7 +157,7 @@ class Home extends Component {
                     <img
                       alt=""
                       height={334}
-                      src="https://lh3.googleusercontent.com/KQAKxYX8KbYCqOAdhJWw0nIHKa5BvH4I_55ne_vFzImQuGw48tWZqvi6UK2DrrTDFg=h310-rw"
+                      src={historicRates}
                       width="auto"
                     />
                   </Carousel.Item>
