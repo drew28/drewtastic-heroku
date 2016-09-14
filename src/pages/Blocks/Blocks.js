@@ -7,150 +7,161 @@ import {
   Well
 } from 'react-bootstrap';
 import GoogleAd from 'react-google-ad';
+import update from 'react-addons-update';
 
 const COLORS = ['#16d5eb', '#4ab19d', '#ffe57e', '#e23f3f'];
 
 export default class Blocks extends React.Component {
   state = {
     activeTiles: 0,
-    columns: 12,
     difficulty: 2,
+    height: 12,
     level: 0,
     matrix: [],
-    rows: 12,
     score: 0,
-    targetScore: 0
+    targetScore: 0,
+    width: 12
   };
 
   componentDidMount() {
     this.initGame();
   }
 
-
-  activateSimilar = function (row, column, color) {
-    const {
-      columns,
-      matrix,
-      rows
-    } = this.state;
-    const copiedMatrix = [...matrix];
+  findSimilar(x, y, color) { // updated
     this.clearSelected();
-    let activeTiles = 0;
-    function findSimilar(row, column, color) {
+    const {
+      height,
+      matrix,
+      width
+    } = this.state;
+    const updatedMatrix = [...matrix];
+    let numberOfActiveTiles = 0;
+    const activateSimilar = (x, y, color) => {
       if(color !== "transparent") {
-        var t = copiedMatrix[row][column];
+        let index = this.getIndex(x, y);
+        let t = updatedMatrix[index];
         if (t && t.isChecked === false) {
           if (t.color === color) {
-            t.isChecked = true;
-            t.active = true;
-            activeTiles++;
-            //check north
-            if (row - 1 >= 0) {
-              findSimilar(row - 1, column, color);
+            updatedMatrix[index] = update(updatedMatrix[index], {$merge: {
+              isChecked: true,
+              active: true
+            }});
+            numberOfActiveTiles++;
+            // check north
+            if (y - 1 >= 0) {
+              activateSimilar(x, y - 1, color);
             }
-            //check south
-            if (row + 1 < rows) {
-              findSimilar(row + 1, column, color);
+            // check south
+            if (y + 1 < width) {
+              activateSimilar(x, y + 1, color);
             }
-            //check east
-            if (column + 1 < columns) {
-              findSimilar(row, column + 1, color);
+            // check east
+            if (x + 1 < height) {
+              activateSimilar(x + 1, y, color);
             }
-            //check west
-            if (column - 1 >= 0) {
-              findSimilar(row, column - 1, color);
+            // check west
+            if (x - 1 >= 0) {
+              activateSimilar(x - 1, y, color);
             }
           }
         }
       }
     }
-    findSimilar(row, column, color);
-    // if (numberOfActiveTiles > 1) {
-    console.log(activeTiles);
-    //   this.setState({matrix: copiedMatrix});
-    // }
-  };
+    activateSimilar(x, y, color);
+    if (numberOfActiveTiles > 1) {
+      this.setState({matrix: updatedMatrix});
+    }
+  }
 
-  initGame() {
+  initGame() { // updated
     const {
-      columns,
-      matrix,
-      rows
+      height,
+      width
     } = this.state;
     const tile = {
-      active: false
+      active: false,
+      isChecked: false,
+      isCleared: false
     };
-    let c = 0;
-    let r = 0;
-    for (r; r < rows; r ++) {
-      matrix[r] = [];
-      for (c = 0; c < columns; c ++) {
-        matrix[r][c] = {
+    let x = 0;
+    let y = 0;
+    const matrix = [];
+    for (x; x < width; x ++) {
+      for (y = 0; y < height; y ++) {
+        matrix.push({
           ...tile,
-          color: this.getColor()
-        };
+          color: this.getColor(),
+          x,
+          y
+        });
       }
     }
-    console.log("setState");
     this.setState({matrix});
   }
 
   clearSelected() {
     const {
-      columns,
-      matrix,
-      rows
+      matrix
     } = this.state;
-    let c = 0;
-    let r = 0;
-    for (r; r < rows; r ++) {
-      for (c = 0; c < columns; c ++) {
-        matrix[r][c] = {
-          ...matrix[r][c],
-          active: false,
-          isChecked: false
-        }
-      }
+    for (let i = 0; i < matrix.length; i++) {
+      matrix[i] = update(matrix[i], {$merge: {
+        isChecked: false,
+        active: false
+      }});
     }
-    console.log("clear set state");
     this.setState({matrix});
   };
 
-  getColor() {
+  getBlockByIndex(index) { // updated
+    const {matrix} = this.state;
+    return matrix[index];
+  }
+
+  getBlock(x, y) { // updated
+    const index = this.getIndex(x, y);
+    return this.getBlockByIndex(index);
+  }
+
+  getColor() { // updated
     let colorIndex = Math.random() * COLORS.length;
     const color = COLORS[Math.floor(colorIndex)];
     return color;
   }
 
-  onClickTile(e, row, column) {
-    const {matrix} = this.state;
-    if (matrix[row][column].active) {
-      console.log("remove all the things.");
+  getIndex(x, y) { // updated
+    const {height} = this.state;
+    return (x * height) + y;
+  }
+
+  handleTileClick(x, y) {
+    const tile = this.getBlock(x, y);
+    if (tile.active) {
+      this.removeActive();
     } else {
-      this.activateSimilar(row, column, matrix[row][column].color);
+      this.findSimilar(x, y, tile.color);
     }
   }
 
   renderGame() {
     const {matrix} = this.state;
-    return matrix.map((column, c) => (
+    return (
       <div
         className="row"
         style={styles.gameRow}
-        key={c}
       >
-        {column.map((tile, r) => (
+        {matrix.map((tile, i) => (
           <Tile
-            key={`(${c}, ${r})`}
-            active={matrix[c][r].active}
+            key={`(${tile.x}, ${tile.y})`}
+            active={tile.active}
+            cleared={tile.isCleared}
             color={tile.color}
-            column={r}
-            onClick={(e, r, c) => this.onClickTile(e, r, c)}
-            row={c}
+            onClick={(x, y) => this.handleTileClick(x, y)}
+            x={tile.x}
+            y={tile.y}
           />
         ))}
       </div>
-    ));
+    );
   }
 
   render() {
@@ -173,7 +184,9 @@ export default class Blocks extends React.Component {
             header={gameHeader}
             footer={gameFooter}
           >
-            {this.renderGame()}
+            <div style={styles.gamePanelGameContainer}>
+              {this.renderGame()}
+            </div>
           </Panel>
         </Well>
         <div className="google-ad-container" style={styles.googleAdContainer}>
@@ -263,96 +276,11 @@ export default class Blocks extends React.Component {
 //       this.width = 5;
 //       this.height = 5;
 //       this.levelManager = {};
-//       this.init = function (config) {
-//           var width = this.width = config && config.width || this.width,
-//               height = this.height = config && config.height || this.height,
-//               board = $('#board'),
-//               w = 0,
-//               h = 0,
-//               row,
-//               t,
-//               that = this,
-//               levelManager = this.levelManager = new LevelManager();
-//           board.empty();
-//           for (h = 0; h < height; h += 1) {
-//               row = $('<tr>');
-//               for (w = 0; w < width; w += 1) {
-//                   t = new Block({
-//                       color: "random",
-//                       x: w,
-//                       y: h,
-//                       game: this
-//                   });
-//                   this.matrix[this.matrix.length] = t;
-//                   row.append(t.tile);
-//               }
-//               board.append(row);
-//           }
-//       };
-//       this.redraw = function () {
-//           var width = this.width = config && config.width || this.width,
-//               height = this.height = config && config.height || this.height,
-//               board = $('#board'),
-//               w = 0,
-//               h = 0,
-//               row,
-//               that = this;
-//           board.empty();
-//           for (h = 0; h < height; h += 1) {
-//               row = $('<tr>');
-//               for (w = 0; w < width; w += 1) {
-//                   row.append(this.matrix[this.getIndex(w, h)].tile);
-//               }
-//               board.append(row);
-//           }
-//       };
-//       this.getBlockByIndex = function (index) {
-//           return this.matrix[index];
-//       };
-//       this.getBlock = function (w, h) {
-//           var index = this.getIndex(w, h);
-//           return this.getBlockByIndex(index);
-//       };
-//       this.getIndex = function (w, h) {
-//           return (h * this.height) + w;
-//       };
+
 //       this.getNumSelected = function () {
 //           return $('#board tr td.selected').length;
 //       };
-//       this.findSimilar = function (x, y, color) {
-//           if(color != "transparent") {
-//               var t = this.getBlock(x, y);
-//               if (t && ($(t.tile).data('block')).isChecked === false) {
-//                   if (t.color === color) {
-//                       (t.tile.addClass('selected').data('block')).isChecked = true;
-//                       //check north
-//                       if (y - 1 >= 0) {
-//                           this.findSimilar(x, y - 1, color);
-//                       }
-//                       //check south
-//                       if (y + 1 < this.height) {
-//                           this.findSimilar(x, y + 1, color);
-//                       }
-//                       //check east
-//                       if (x + 1 < this.width) {
-//                           this.findSimilar(x + 1, y, color);
-//                       }
-//                       //check west
-//                       if (x - 1 >= 0) {
-//                           this.findSimilar(x - 1, y, color);
-//                       }
-//                   }
-//               }
-//           }
-//       };
-//       this.clearSelected = function () {
-//           $(this.matrix).each(function (index, block) {
-//               $(block.tile)
-//                   .removeClass('selected')
-//                   .data('block');
-//               block.isChecked = false;
-//           });
-//       };
+
 //       this.removeSelected = function () {
 //           // if the board is laid out
 //               // 0 1 2

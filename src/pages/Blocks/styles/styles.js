@@ -5,6 +5,10 @@ export default {
     width: 476,
     margin: 'auto'
   },
+  gamePanelGameContainer: {
+    position: "relative",
+    height: tileHeight * 12
+  },
   gameRow: {
     flexDirection: "row",
     height: tileHeight
@@ -12,5 +16,5 @@ export default {
   googleAdContainer: {
     margin: "20px auto",
     width: 400
-  },
+  }
 };

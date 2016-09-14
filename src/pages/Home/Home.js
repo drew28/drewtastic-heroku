@@ -59,23 +59,24 @@ class Home extends Component {
         </a>
       </div>
     );
+    const carouselImages = [dynamicSigns, tripCostEstimator, historicRates];
     return (
       <div className="Home" style={styles.home}>
         <Panel style={styles.panel}>
           <Jumbotron style={styles.jumbotron}>
             <h1>
-              Game of Life
+              Blocks
             </h1>
             <p>
-              Checkout the react version of the game of life!
-
+              Play this fun coloring matching block destroying game!  The object of this game is to clear the board of
+              blocks.  This is done by selecting a block that has an adjacent block with a similar color.
             </p>
             <p style={styles.panelFooter}>
               <Button
                 bsStyle="primary"
-                onClick={() => {this.gotoRoute("/gameoflife")}}
+                onClick={() => {this.gotoRoute("/blocks")}}
               >
-                View Game of Life!
+                Play blocks!
               </Button>
             </p>
           </Jumbotron>
@@ -83,19 +84,33 @@ class Home extends Component {
         <div className="google-ad-container" style={styles.googleAdContainer}>
           <GoogleAd client="ca-pub-7550332846806881" slot="1308243719" format="auto" />
         </div>
-        <a name="expresslanesimages"></a>
+        <Panel
+          footer={this.getFooterButton("/gameoflife", "View Game of Life!")}
+          header={this.getPanelHeader("Game of Life")}
+          style={styles.panel}
+        >
+          <p>
+            Checkout the react version of the game of life!
+          </p>
+          <p>
+            More information on the Game of Life is available on
+            {" "}
+            <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life" target="_blank">wikipedia</a>.
+          </p>
+        </Panel>
         <Panel
           footer={this.getFooterButton("/pyramids", "Play Pyramids!")}
           header={this.getPanelHeader("Pyramids")}
           style={styles.panel}
         >
           <p>
-            The object of this game is to remove cards from the pyramid to the foundation. this
+            The object of this game is to remove cards from the pyramid to the foundation. This
             is done by selecting a card that is either a value higher or lower than the foundation
             card.  For example, when the foundation card is 4, a 3 or 5 may be removed from the
             pyramid.
           </p>
         </Panel>
+        <a name="expresslanesimages"></a>
         <Panel
           footer={googlePlayFooter}
           header={this.getPanelHeader("Express Lanes Images")}
@@ -137,30 +152,16 @@ class Home extends Component {
               </Col>
               <Col xs={6} md={4} style={styles.screenshotCarouselContainer}>
                 <Carousel style={styles.screenshotCarousel}>
-                  <Carousel.Item>
-                    <img
-                      alt=""
-                      height={334}
-                      src={dynamicSigns}
-                      width="auto"
-                    />
-                  </Carousel.Item>
-                  <Carousel.Item>
-                    <img
-                      alt=""
-                      height={334}
-                      src={tripCostEstimator}
-                      width="auto"
-                    />
-                  </Carousel.Item>
-                  <Carousel.Item>
-                    <img
-                      alt=""
-                      height={334}
-                      src={historicRates}
-                      width="auto"
-                    />
-                  </Carousel.Item>
+                 {carouselImages.map((img, i) => (
+                   <Carousel.Item key={i}>
+                     <img
+                       alt=""
+                       height={334}
+                       src={img}
+                       width="auto"
+                     />
+                   </Carousel.Item>
+                 ))}
                 </Carousel>
               </Col>
             </Row>

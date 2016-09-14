@@ -5,27 +5,33 @@ export const tileHeight = 25;
 
 const Tile = ({
   active = false,
+  cleared = false,
   color = '',
-  column = 0,
   onClick = () => {},
-  row = 0
+  x = 0,
+  y = 0
 }) => {
+  const onTileClick = (e) => {
+    e.preventDefault();
+    onClick(x, y);
+  }
   return (
     <div
       className={`cell${active ? " active" : ""}`}
-      onClick={(e) => {
-        onClick(e, row, column);
-      }}
+      onClick={onTileClick}
       style={{
         backgroundColor: color,
         // border: active ? "1px solid" : "none",
         cursor: active ? "auto" : "pointer",
-        display: "inline-block",
+        display: !cleared ? "block" : "none",
         height: tileHeight,
+        left: x * tileWidth,
         opacity: active ? .8 : 1,
+        position: "absolute",
+        top: y * tileHeight,
         width: tileWidth
       }}
-      title={`(${column}, ${row})`}
+      title={`(${x}, ${y})`}
     >
       {' '}
     </div>
@@ -34,9 +40,10 @@ const Tile = ({
 
 Tile.propTypes = {
   active: React.PropTypes.bool.isRequired,
-  column: React.PropTypes.number,
+  cleared: React.PropTypes.bool,
   onClick: React.PropTypes.func,
-  row: React.PropTypes.number
+  x: React.PropTypes.number,
+  y: React.PropTypes.number
 }
 
 export default Tile;
