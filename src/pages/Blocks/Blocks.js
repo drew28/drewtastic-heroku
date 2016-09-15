@@ -27,14 +27,14 @@ export default class Blocks extends React.Component {
     this.initGame();
   }
 
-  findSimilar(x, y, color) { // updated
+  findSimilar(x, y, color, config = {}) { // updated
     this.clearSelected();
     const {
       height,
       matrix,
       width
     } = this.state;
-    const updatedMatrix = [...matrix];
+    let updatedMatrix = [...matrix];
     let numberOfActiveTiles = 0;
     const activateSimilar = (x, y, color) => {
       if(color !== "transparent") {
@@ -42,10 +42,14 @@ export default class Blocks extends React.Component {
         let t = updatedMatrix[index];
         if (t && t.isChecked === false) {
           if (t.color === color) {
-            updatedMatrix[index] = update(updatedMatrix[index], {$merge: {
-              isChecked: true,
-              active: true
-            }});
+            updatedMatrix = update(updatedMatrix, {
+              [index]: {
+                $merge: {
+                  isChecked: true,
+                  active: true
+                }
+              }
+            });
             numberOfActiveTiles++;
             // check north
             if (y - 1 >= 0) {
@@ -68,6 +72,9 @@ export default class Blocks extends React.Component {
       }
     }
     activateSimilar(x, y, color);
+    if (config.onlyNumberOfActiveTiles) {
+      return numberOfActiveTiles;
+    }
     if (numberOfActiveTiles > 1) {
       this.setState({matrix: updatedMatrix});
     }
@@ -102,13 +109,18 @@ export default class Blocks extends React.Component {
     const {
       matrix
     } = this.state;
+    let updatedMatrix = [...matrix];
     for (let i = 0; i < matrix.length; i++) {
-      matrix[i] = update(matrix[i], {$merge: {
-        isChecked: false,
-        active: false
-      }});
+      updatedMatrix = update(updatedMatrix, {
+        [i]: {
+          $merge: {
+            isChecked: false,
+            active: false
+          }
+        }
+      });
     }
-    this.setState({matrix});
+    this.setState({matrix: updatedMatrix});
   };
 
   getBlockByIndex(index) { // updated
@@ -141,6 +153,21 @@ export default class Blocks extends React.Component {
     }
   }
 
+  moreMovesAvailable() {
+    const {matrix} = this.state;
+    const movesLeft = matrix.some((block, index) => {
+      if(block.color !== "transparent") {
+        let numSelected = this.findSimilar(block.x, block.y, block.color, {
+          onlyNumberOfActiveTiles: true
+        });
+        console.log(`numSelected: ${numSelected}`);
+        return numSelected > 1;
+      }
+      return false;
+    });
+    return movesLeft;
+  }
+
   removeActive() {
     const {
       height,
@@ -148,7 +175,7 @@ export default class Blocks extends React.Component {
       width
     } = this.state;
 
-    const updatedMatrix = [...matrix];
+    let updatedMatrix = [...matrix];
 
     const swapBlocks = (a, b) => {
       const temp = {...a};
@@ -219,12 +246,15 @@ export default class Blocks extends React.Component {
     let w = 0;
     for (let i = 0; i < matrix.length; i++) {
       if (updatedMatrix[i].active) {
-          updatedMatrix[i] = update(updatedMatrix[i], {$merge: {
-            color: "transparent",
-            active: false,
-            isChecked: false
-          }
-        });
+          updatedMatrix = update(updatedMatrix, {
+            [i]: {
+              $merge: {
+                color: "transparent",
+                active: false,
+                isChecked: false
+              }
+            }
+          });
       }
     }
 
@@ -234,10 +264,12 @@ export default class Blocks extends React.Component {
 
     collapseRows();
 
+
     this.setState({matrix: updatedMatrix});
-  //           if(!this.moreMovesAvailable()) {
-  //              this.gameOver();
-  //           }
+    // if(!this.moreMovesAvailable()) {
+    //   console.log("GAME OVER");
+    // }
+    // this.clearSelected();
   }
 
   renderGame() {
@@ -271,12 +303,6 @@ export default class Blocks extends React.Component {
         >
           Restart
         </Button>
-        <Button
-          bsStyle="danger"
-          onClick={() => {console.log(this.state.matrix)}}
-        >
-          Log Matrix
-       </Button>
       </div>
     );
 
@@ -291,6 +317,9 @@ export default class Blocks extends React.Component {
               {this.renderGame()}
             </div>
           </Panel>
+          <div className="jsfiddle">
+            Check out a jquery version on <a href="https://jsfiddle.net/drew28/Q3s25/" target="_blank">JSFiddle</a>
+          </div>
         </Well>
         <div className="google-ad-container" style={styles.googleAdContainer}>
           <GoogleAd client="ca-pub-7550332846806881" slot="1308243719" format="auto" />
@@ -300,143 +329,6 @@ export default class Blocks extends React.Component {
   }
 }
 
-
-
-// class Block {
-//   //block game
-//   Block(config) {
-//       var that = this,
-//           x = this.x = config && config.x || 0,
-//           y = this.y = config && config.y || 0,
-//           id = this.id = x + "_" + y,
-//           isCleared = this.isCleared = config && config.isCleared || false,
-//           isChecked = this.isChecked = config && config.idChecked || false;
-//       colors = this.colors = ['#16d5eb', '#4ab19d', '#ffe57e', '#e23f3f'],
-//       color = this.color = ((config && config.color === 'random')
-//           ? Math.floor(Math.random() * this.colors.length)
-//           : config && config.color || 0),
-//       game = this.game = config && config.game || null,
-//       tile = this.tile = config && config.tile || $('<td>')
-//       .data('block', this)
-//       .css('background-color', (color === "transparent") ? "transparent" : colors[color])
-//           .on('click', function () {
-//           if (that.isSelected()) {
-//               that.game.clearSelected();
-//               var t = that.game.findSimilar(that.x, that.y, that.color),
-//                   s = that.game.getNumSelected();
-//               if (s <= 1) {
-//                   that.game.clearSelected();
-//               } else {
-//                   $('#console').text(s + " selected.");
-//               }
-//           } else {
-//               that.game.removeSelected();
-//           }
-//       });
-//       tile.addClass("block");
-//       this.changeColor = function (color) {
-//           this.color = color;
-//           if (color === "transparent"){
-//               this.tile.css({
-//                   "background-color": "transparent",
-//                   "cursor": "auto"
-//               });
-//               ($(this.tile).data('block')).isCleared = true;
-//           } else {
-//               this.tile.css({
-//                   "background-color": colors[color],
-//                   "cursor": "pointer"
-//               });
-//               ($(this.tile).data('block')).isCleared = false;
-//           }
-//       };
-//       this.toString = function () {
-//           var str = "";
-//           str = "(" + this.x + ", " + this.y + ")";
-//           return str;
-//       };
-//       this.isSelected = function () {
-//           return !that.tile.hasClass('selected');
-//       };
-//       return this;
-//   }
-//
-//   LevelManager(config) {
-//       this.score = 0;
-//       this.targetScore = 0;
-//       this.level = 0;
-//       this.difficulty = 2;
-//       this.addScore = function (value) {
-//           this.score += value;
-//       };
-//       this.resetScore = function () {
-//           this.score = 0;
-//       };
-//   }
-//
-//   Tiles(config) {
-//       this.matrix = [];
-//       this.width = 5;
-//       this.height = 5;
-//       this.levelManager = {};
-
-//       this.getNumSelected = function () {
-//           return $('#board tr td.selected').length;
-//       };
-
-
-//       this.collapseRows = function () { //brings tiles from the right
-//           var width = this.width,
-//               height = this.height,
-//               w = 0,
-//               cursor,
-//               c2s; //column to swap
-//           //find the first empty column, and bring the next non-empty column over.
-//           for(w; w < width;  w += 1) {
-//               if(this.isEmptyColumn(w)) {
-//                   //find next empty column
-//                   for(cursor = w + 1; cursor < width; cursor += 1) {
-//                       if (!this.isEmptyColumn(cursor)) {
-//                           this.swapColumns(w, cursor);
-//                           if(w < width) {
-//                               w += 1;
-//                           }
-//                       }
-//                   }
-//               }
-//           }
-//       };
-//       this.isEmptyColumn = function (col) {
-//           //check if the bottom one is empty
-//           return this.getBlock(col, this.height-1).isCleared;
-//       };
-
-//       this.swapColumns = function (col1, col2) {
-//           var width = this.width,
-//               height = this.height,
-//               h = 0;
-//           //find the first empty column, and bring the next non-empty column over.
-//           for(h; h < height;  h += 1) {
-//               this.swapBlocks(this.getBlock(col1, h), this.getBlock(col2, h));
-//           }
-//       };
-//       this.moreMovesAvailable = function () {
-//           var moreMovesLeft = false,
-//               that = this;
-//           $.each(this.matrix, function(index, block) {
-//               if(!block.isCleared) {
-//                   var numSelected = 0;
-//                   that.findSimilar(block.x, block.y, block.color),
-//                   numSelected = that.getNumSelected();
-//                   that.clearSelected();
-//                   if (numSelected > 1 ) {
-//                       moreMovesLeft = true;
-//                       return false;
-//                   }
-//               }
-//           });
-//           return moreMovesLeft;
-//       };
 //       this.numBlocksLeft = function () {
 //           var count = 0;
 //           $.each(this.matrix, function (index, block) {
@@ -457,11 +349,3 @@ export default class Blocks extends React.Component {
 //           }
 //           $('#console').html(bonusText + "<br />There are no more moves available.  Game over.");
 //       };
-//   }
-//
-//   var tiles = new Tiles();
-//   tiles.init({
-//       width: 15,
-//       height: 15
-//   });
-// }
