@@ -5,7 +5,6 @@ export const tileHeight = 25;
 
 const Tile = ({
   active = false,
-  cleared = false,
   color = '',
   onClick = () => {},
   x = 0,
@@ -23,7 +22,7 @@ const Tile = ({
         backgroundColor: color,
         // border: active ? "1px solid" : "none",
         cursor: active ? "auto" : "pointer",
-        display: !cleared ? "block" : "none",
+        display: color !== "transparent" ? "block" : "none",
         height: tileHeight,
         left: x * tileWidth,
         opacity: active ? .8 : 1,
@@ -40,7 +39,6 @@ const Tile = ({
 
 Tile.propTypes = {
   active: React.PropTypes.bool.isRequired,
-  cleared: React.PropTypes.bool,
   onClick: React.PropTypes.func,
   x: React.PropTypes.number,
   y: React.PropTypes.number

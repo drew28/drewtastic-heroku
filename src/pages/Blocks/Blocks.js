@@ -80,8 +80,7 @@ export default class Blocks extends React.Component {
     } = this.state;
     const tile = {
       active: false,
-      isChecked: false,
-      isCleared: false
+      isChecked: false
     };
     let x = 0;
     let y = 0;
@@ -142,6 +141,105 @@ export default class Blocks extends React.Component {
     }
   }
 
+  removeActive() {
+    const {
+      height,
+      matrix,
+      width
+    } = this.state;
+
+    const updatedMatrix = [...matrix];
+
+    const swapBlocks = (a, b) => {
+      const temp = {...a};
+      a.color = b.color;
+      b.color = temp.color;
+    };
+
+    const collapseColumn = (x) => { //brings tiles down.
+      let clearedBlock,
+          h,
+          t2s, // tile to swap
+          cursor; //temp var to check tiles above current tile
+          // temp = "";
+      for (h = height - 1; h >= 0; h -= 1) { //start from the bottom
+        clearedBlock = updatedMatrix[this.getIndex(x, h)];
+        if (clearedBlock.color === "transparent") {
+          //swap with a block above that isn't cleared
+          for (cursor = h - 1; cursor >= 0; cursor -= 1) {
+            t2s = updatedMatrix[this.getIndex(x, cursor)]; //find next tile to swap
+            if (t2s.color !== "transparent") {
+              swapBlocks(clearedBlock, t2s);
+              // temp = {...clearedBlock};
+              // clearedBlock.color = t2s.color;
+              // t2s.color = temp.color;
+              if (h > 0) {
+                h -= 1;
+                clearedBlock = updatedMatrix[this.getIndex(x, h)];
+              }
+            }
+          }
+        }
+      }
+    }
+
+    const isEmptyColumn = (x) => {
+        //check if the bottom one is empty
+        return updatedMatrix[this.getIndex(x, height - 1)].color === "transparent";
+    };
+
+    const swapColumns = (x1, x2) => {
+        let h = 0;
+        //find the first empty column, and bring the next non-empty column over.
+        for(h; h < height;  h += 1) {
+            swapBlocks(updatedMatrix[this.getIndex(x1, h)], updatedMatrix[this.getIndex(x2, h)]);
+        }
+    };
+
+    const collapseRows = () => { //brings tiles from the right
+      let w = 0,
+        cursor; //column to swap
+      //find the first empty column, and bring the next non-empty column over.
+      for(w; w < width;  w += 1) {
+        if(isEmptyColumn(w)) {
+          //find next empty column
+          for(cursor = w + 1; cursor < width; cursor += 1) {
+            if (!isEmptyColumn(cursor)) {
+              swapColumns(w, cursor);
+              if(w < width) {
+                w += 1;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // clear all active to cleared
+    let w = 0;
+    for (let i = 0; i < matrix.length; i++) {
+      if (updatedMatrix[i].active) {
+          updatedMatrix[i] = update(updatedMatrix[i], {$merge: {
+            color: "transparent",
+            active: false,
+            isChecked: false
+          }
+        });
+      }
+    }
+
+    for (w = 0; w < width; w += 1) {
+        collapseColumn(w);
+    }
+
+    collapseRows();
+
+    this.setState({matrix: updatedMatrix});
+  //           if(!this.moreMovesAvailable()) {
+  //              this.gameOver();
+  //           }
+  }
+
   renderGame() {
     const {matrix} = this.state;
     return (
@@ -151,9 +249,8 @@ export default class Blocks extends React.Component {
       >
         {matrix.map((tile, i) => (
           <Tile
-            key={`(${tile.x}, ${tile.y})`}
+            key={`${i}: (${tile.x}, ${tile.y})`}
             active={tile.active}
-            cleared={tile.isCleared}
             color={tile.color}
             onClick={(x, y) => this.handleTileClick(x, y)}
             x={tile.x}
@@ -174,6 +271,12 @@ export default class Blocks extends React.Component {
         >
           Restart
         </Button>
+        <Button
+          bsStyle="danger"
+          onClick={() => {console.log(this.state.matrix)}}
+        >
+          Log Matrix
+       </Button>
       </div>
     );
 
@@ -281,62 +384,7 @@ export default class Blocks extends React.Component {
 //           return $('#board tr td.selected').length;
 //       };
 
-//       this.removeSelected = function () {
-//           // if the board is laid out
-//               // 0 1 2
-//               // 3 4 5
-//               // 6 7 8
-//           var width = this.width = config && config.width || this.width,
-//               height = this.height = config && config.height || this.height,
-//               board = $('#board'),
-//               w = 0,
-//               h = 0,
-//               row,
-//               t,
-//               that = this,
-//               cleared = $('#board tr td.selected')
-//                   .css({
-//                       'background-color': 'transparent',
-//                       'cursor': 'auto'
-//                   });
-//           $.each(cleared, function (index, tile) {
-//               var block = $(tile).data('block');
-//               block.isCleared = true;
-//               block.changeColor("transparent");
-//           });
-//           this.clearSelected();
-//           for (w = 0; w < width; w += 1) {
-//               this.collapseColumn(w);
-//           }
-//           this.collapseRows();
-//           $('#console').empty();
-//           if(!this.moreMovesAvailable()) {
-//              this.gameOver();
-//           }
-//       };
-//       this.collapseColumn = function (col) { //brings tiles down.
-//           var height = this.height,
-//               block,
-//               h,
-//               t2s, // tile to swap
-//               cursor; //temp var to check tiles above current tile
-//           for (h = height - 1; h >= 0; h -= 1) { //start from the bottom
-//               block = this.getBlock(col, h);
-//               if (block.isCleared) {
-//                   //swap with a block above that isn't cleared
-//                   for (cursor = h - 1; cursor >= 0; cursor -= 1) {
-//                       t2s = this.getBlock(col, cursor); //find next tile to swap
-//                       if (!t2s.isCleared) {
-//                           this.swapBlocks(block, t2s);
-//                           if (h > 0) {
-//                               h -= 1;
-//                               block = this.getBlock(col, h);
-//                           }
-//                       }
-//                   }
-//               }
-//           }
-//       };
+
 //       this.collapseRows = function () { //brings tiles from the right
 //           var width = this.width,
 //               height = this.height,
@@ -362,12 +410,7 @@ export default class Blocks extends React.Component {
 //           //check if the bottom one is empty
 //           return this.getBlock(col, this.height-1).isCleared;
 //       };
-//       this.swapBlocks = function (a, b) {
-//           //swap background colors
-//           var temp = a.color;
-//           a.changeColor(b.color);
-//           b.changeColor(temp);
-//       };
+
 //       this.swapColumns = function (col1, col2) {
 //           var width = this.width,
 //               height = this.height,
