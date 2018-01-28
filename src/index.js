@@ -35,7 +35,7 @@ ReactDOM.render((
   <Router history={browserHistory} onUpdate={logPageView} >
     <Route path="/" component={App}>
       <IndexRoute component={Home} />
-      <Route path="blocks" component={Blocks} />
+      <Route path="menu" component={Blocks} />
       <Route path="gameoflife" component={GameOfLife} />
       <Route path="pyramids" component={Pyramids} />
     </Route>

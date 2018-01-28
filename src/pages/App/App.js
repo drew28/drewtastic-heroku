@@ -17,7 +17,7 @@ class App extends Component {
             {this.props.children}
           </div>
           <footer style={styles.appFooter}>
-            <Link to="/">Drewtastic</Link>
+            <Link to="/">Chop Shop Taco</Link>
           </footer>
         </div>
       </StyleRoot>
